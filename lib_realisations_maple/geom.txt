@@ -1,0 +1,87 @@
+geom:=module()
+
+export Collinear, Concurrent, Concyclic, Equidistant, Perpendicular, Similar, Similar2, Tangent, Tangent2, area, center, centroid, conjugate, intersection, norm, orthocenter, projection, radical, reflection, scalarproduct, secondpoint, symmetry;
+
+option package;
+
+Collinear:=proc(a,b)
+if
+numer(a*conjugate(b)-conjugate(a)*b)=0 then return TRUE else return FALSE
+end if
+end proc;
+
+Concurrent:=proc(P,a,Q,b,R,c)
+if
+numer(intersection(P,a,Q,b)-intersection(Q,b,R,c))=0 then return TRUE else return FALSE
+end if
+end proc;
+
+Concyclic:=proc(P,Q,R,S)
+if
+numer((P-R)*(Q-S)/(Q-R)/(P-S)-conjugate((P-R)*(Q-S)/(Q-R)/(P-S)))=0 then return TRUE else return FALSE
+end if
+end proc;
+
+Equidistant:=proc(P,Q,R,S)
+if
+numer(norm(P-Q)-norm(R-S))=0 then return TRUE else return FALSE
+end if
+end proc;
+
+Perpendicular:=proc(a,b)
+if
+numer(a*conjugate(b)+conjugate(a)*b)=0 then return TRUE else return FALSE
+end if
+end proc;
+
+Similar:=proc(A,B,C,P,Q,R)
+if
+numer(A*Q+B*R+C*P-B*P-C*Q-A*R)=0 then return TRUE else return FALSE
+end if
+end proc;
+
+Similar2:=proc(A,B,C,P,Q,R)
+if
+numer(A*conjugate(Q)+B*conjugate(R)+C*conjugate(P)-B*conjugate(P)-C*conjugate(Q)-A*conjugate(R))=0 then return TRUE else return FALSE
+end if
+end proc;
+
+Tangent:=proc(P,a,Q,R)
+if
+Equidistant(Q,R,Q,projection(Q,P,a))=TRUE then return TRUE else return FALSE
+end if
+end proc;
+
+Tangent2:=proc(P,Q,R,S)
+if
+Equidistant(P,Q,P,radical(P,Q,R,S))=TRUE then return TRUE else return FALSE
+end if
+end proc;
+
+area:=(A,B,C)->factor(((conjugate(B)-conjugate(A))*(C-A)-(B-A)*(conjugate(C)-conjugate(A)))/4/I);
+
+center:=(P,Q,R)->intersection((P+Q)/2,I*(P-Q),(Q+R)/2,I*(Q-R));
+
+centroid:=(A,B,C)->factor((A+B+C)/3);
+
+conjugate:=X->factor(subs(seq(z[k]=1/z[k],k=1..6),I=-I,X));
+
+intersection:=(P,a,Q,b)->factor((a*(Q*conjugate(b)-b*conjugate(Q))-b*(P*conjugate(a)-conjugate(P)*a))/(a*conjugate(b)-conjugate(a)*b));
+
+norm:=X->factor(X*conjugate(X));
+
+orthocenter:=(A,B,C)->intersection(A,I*(B-C),B,I*(A-C));
+
+projection:=(Z,P,a)->intersection(Z,I*a,P,a);
+
+radical:=(P,Q,R,S)->factor((Q*conjugate(Q)-Q*conjugate(P)-conjugate(Q)*P-S*conjugate(S)+S*conjugate(R)+conjugate(S)*R-conjugate(P)*R+P*conjugate(R))/2/conjugate(R-P));
+
+reflection:=(Z,P,a)->symmetry(Z,projection(Z,P,a));
+
+secondpoint:=(P,a,Q)->reflection(P,Q,I*a);
+
+scalarproduct:=(a,b)->factor((a*conjugate(b)+conjugate(a)*b)/2);
+
+symmetry:=(Z,P)->factor(2*P-Z);
+
+end module:
